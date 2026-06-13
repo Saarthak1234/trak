@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Musync - Free Spotify CLI Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    
+    <header class="glass-header">
+      <div class="container header-content">
+        <h1 class="logo">🎵 Musync</h1>
+        <nav>
+          <a href="#features">Features</a>
+          <a href="#installation">Installation</a>
+          <a href="#usage">Usage</a>
+          <a href="https://github.com/Saarthak1234/musync" target="_blank" class="btn btn-outline">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero container">
+        <h2 class="hero-title">Stream Spotify for Free,<br><span class="gradient-text">Right from your Terminal.</span></h2>
+        <p class="hero-subtitle">
+          Musync is a blazing-fast CLI application that automatically sources official, ad-free audio from YouTube for your Spotify playlists. No premium required.
+        </p>
+        <div class="hero-actions">
+          <a href="#installation" class="btn btn-primary">Get Started</a>
+          <a href="#usage" class="btn btn-secondary">Read the Docs</a>
+        </div>
+        
+        <div class="terminal-mockup glass-panel">
+          <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">~/musync — node</span>
+          </div>
+          <div class="terminal-body">
+            <p><span class="prompt">$</span> musync play "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M"</p>
+            <p class="log">✔ Fetching tracks... <span class="success">Found 50 tracks</span></p>
+            <p class="log title">🎵 Starting playlist...</p>
+            <p class="log controls">Controls: [Space] Pause/Resume  [n] Next  [p] Prev  [r] Shuffle  [/] Jump</p>
+            <p class="log"><span class="track-number">[1/50]</span> <span class="track-name">The Cure</span> — Lady Gaga</p>
+            <p class="log progress">████████████░░░░░░░░░░░░░░░░░░ 1:20 / 3:45</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="features" class="container">
+        <h3 class="section-title">Why Musync?</h3>
+        <div class="features-grid">
+          <div class="feature-card glass-panel">
+            <div class="feature-icon">🚀</div>
+            <h4>Zero-Setup Playback</h4>
+            <p>Paste any public Spotify URL to start playing instantly. No accounts, no API keys, no configuration.</p>
+          </div>
+          <div class="feature-card glass-panel">
+            <div class="feature-icon">🔐</div>
+            <h4>Optional Login</h4>
+            <p>Connect your Spotify account to seamlessly access and search through your private saved playlists.</p>
+          </div>
+          <div class="feature-card glass-panel">
+            <div class="feature-icon">⌨️</div>
+            <h4>Command Mode</h4>
+            <p>Full keyboard support. Hit <code>/</code> during playback to instantly jump to any track or search for a custom song.</p>
+          </div>
+          <div class="feature-card glass-panel">
+            <div class="feature-icon">📦</div>
+            <h4>Auto Dependencies</h4>
+            <p>The built-in wizard automatically installs <code>ffmpeg</code> and <code>yt-dlp</code> for you under the hood.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="installation" class="container docs-section glass-panel">
+        <h3 class="section-title">Installation</h3>
+        <p>The easiest way to install Musync on Mac or Linux is using our one-line auto-installer. Open your terminal and run:</p>
+        <div class="code-block">
+          <pre><code>curl -sL https://raw.githubusercontent.com/Saarthak1234/musync/main/install.sh | bash</code></pre>
+        </div>
+        <p class="note">This will automatically download the correct binary for your system and make it globally available. If you are on Windows, download the executable directly from the GitHub Releases page.</p>
+      </section>
+
+      <section id="usage" class="container docs-section glass-panel">
+        <h3 class="section-title">Usage Manual</h3>
+        
+        <h4>1. Play Public URLs (No Login Required)</h4>
+        <p>Play any public playlist instantly:</p>
+        <div class="code-block">
+          <pre><code>musync play "https://open.spotify.com/playlist/..."</code></pre>
+        </div>
+
+        <h4>2. Search & Play Single Songs</h4>
+        <p>Find a specific track instantly:</p>
+        <div class="code-block">
+          <pre><code>musync search "Rick Astley"</code></pre>
+        </div>
+
+        <h4>3. Authenticate with Spotify</h4>
+        <p>If you want to play your private playlists by name, you can securely log in via OAuth:</p>
+        <div class="code-block">
+          <pre><code>musync auth
+musync list
+musync play "My Awesome Playlist"</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built with ❤️ by Saarthak Agarwal</p>
+    </footer>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

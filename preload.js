@@ -1,0 +1,33 @@
+const { contextBridge, ipcRenderer } = require('electron')
+
+contextBridge.exposeInMainWorld('api', {
+  close: () => ipcRenderer.invoke('close-app'),
+  minimize: () => ipcRenderer.invoke('minimize-app'),
+  searchSong: (query) => ipcRenderer.invoke('search-song', query),
+  openCredentialsWindow: () => ipcRenderer.invoke('open-credentials-window'),
+  closeCredentialsWindow: () => ipcRenderer.invoke('close-credentials-window'),
+  saveSpotifyCreds: (id, secret) => ipcRenderer.invoke('save-spotify-creds', id, secret),
+  getSpotifyCreds: () => ipcRenderer.invoke('get-spotify-creds'),
+  isLoggedIn: () => ipcRenderer.invoke('is-logged-in'),
+  togglePlay: () => ipcRenderer.invoke('toggle-play'),
+  seek: (seconds) => ipcRenderer.invoke('seek', seconds),
+  nextSong: () => ipcRenderer.invoke('next-song'),
+  prevSong: () => ipcRenderer.invoke('prev-song'),
+  toggleLoop: () => ipcRenderer.invoke('toggle-loop'),
+  toggleShuffle: () => ipcRenderer.invoke('toggle-shuffle'),
+  addQueue: (query) => ipcRenderer.invoke('add-queue', query),
+  getQueue: () => ipcRenderer.invoke('get-queue'),
+  clearQueue: () => ipcRenderer.invoke('clear-queue'),
+  setQueue: (queueArray) => ipcRenderer.invoke('set-queue', queueArray),
+  reorderQueue: (oldIndex, newIndex) => ipcRenderer.invoke('reorder-queue', oldIndex, newIndex),
+  spliceQueue: (start, count) => ipcRenderer.invoke('splice-queue', start, count),
+  getPlaylists: () => ipcRenderer.invoke('get-playlists'),
+  getPlaylistTracks: (id) => ipcRenderer.invoke('get-playlist-tracks', id),
+  fetchPlaylistUrl: (url) => ipcRenderer.invoke('fetch-playlist-url', url),
+  onTrackStarted: (callback) => ipcRenderer.on('track-started', callback),
+  onTrackLoading: (callback) => ipcRenderer.on('track-loading', callback),
+  onTrackError: (callback) => ipcRenderer.on('track-error', callback),
+  onPlaybackTime: (callback) => ipcRenderer.on('playback-time', callback),
+  onPlaybackStopped: (callback) => ipcRenderer.on('playback-stopped', callback),
+  onPlaybackStateUpdate: (callback) => ipcRenderer.on('playback-state-update', callback)
+})
