@@ -695,13 +695,40 @@ window.api.onPlaybackStateUpdate((event, isPaused) => {
 
 // Initialize connection button state
 window.api.isLoggedIn().then(loggedIn => {
-  const btn = document.getElementById('btn-auth-top')
+  const btnTop = document.getElementById('btn-auth-top')
+  const btnSettings = document.getElementById('btn-auth-settings')
+  const statusText = document.getElementById('spotify-status-text')
+  
   if (loggedIn) {
-    btn.innerHTML = 'Connected <span style="display:inline-block; width:6px; height:6px; background:rgb(var(--bg-color-rgb)); border-radius:50%; margin-left:4px; vertical-align:middle;"></span>'
-    btn.style.color = 'rgb(var(--bg-color-rgb))'
-    btn.style.background = 'var(--accent)'
-    btn.style.border = 'none'
-    btn.style.fontWeight = '600'
+    btnTop.innerHTML = 'Connected <span style="display:inline-block; width:6px; height:6px; background:rgb(var(--bg-color-rgb)); border-radius:50%; margin-left:4px; vertical-align:middle;"></span>'
+    btnTop.style.color = 'rgb(var(--bg-color-rgb))'
+    btnTop.style.background = 'var(--accent)'
+    btnTop.style.border = 'none'
+    btnTop.style.fontWeight = '600'
+    
+    // Disable top button action when connected
+    btnTop.onclick = (e) => e.preventDefault()
+    
+    if (statusText) {
+      statusText.textContent = 'Connected'
+      statusText.style.color = 'var(--accent)'
+    }
+    
+    if (btnSettings) {
+      btnSettings.innerHTML = 'Disconnect Spotify'
+      btnSettings.style.background = 'rgba(255,50,50,0.1)'
+      btnSettings.style.color = '#ff6b6b'
+      
+      btnSettings.addEventListener('click', async () => {
+        await window.api.logoutSpotify()
+        location.reload()
+      })
+    }
+  } else {
+    btnTop.addEventListener('click', toggleSpotifyAuth)
+    if (btnSettings) {
+      btnSettings.addEventListener('click', toggleSpotifyAuth)
+    }
   }
 })
 
@@ -758,6 +785,13 @@ document.querySelectorAll('.theme-card').forEach(card => {
     const target = e.currentTarget
     target.classList.add('active')
     
+    // Disable GIF background when a theme card is clicked
+    if (customGifSettings.showBackground) {
+      customGifSettings.showBackground = false;
+      localStorage.setItem('customGifSettings', JSON.stringify(customGifSettings));
+      applyCustomGifSettings();
+    }
+    
     const rgb = target.getAttribute('data-color')
     if (rgb) {
       root.style.setProperty('--bg-color-rgb', rgb)
@@ -809,8 +843,6 @@ function toggleSpotifyAuth() {
   window.api.openCredentialsWindow()
 }
 
-btnAuthTop.addEventListener('click', toggleSpotifyAuth)
-btnAuthSettings.addEventListener('click', toggleSpotifyAuth)
 
 // Playback State
 let isPlaying = false
@@ -1205,6 +1237,7 @@ function applyCustomGifSettings() {
     if (customGifOverlay) customGifOverlay.style.borderRadius = '8px';
 
     if (customGifSettings.showBackground) {
+      document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'))
       document.body.style.backgroundImage = `url('${customGifSettings.url}')`;
       document.body.style.backgroundSize = 'cover';
       document.body.style.backgroundPosition = 'center';

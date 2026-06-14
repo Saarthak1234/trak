@@ -7,7 +7,7 @@ import mpvAPI from 'node-mpv'
 import spotifyUrlInfo from 'spotify-url-info'
 
 const { getTracks } = spotifyUrlInfo(fetch)
-import { isLoggedIn, getTokens, isTokenExpired, saveTokens, saveAppCredentials, getAppCredentials } from './src/config.js'
+import { isLoggedIn, getTokens, isTokenExpired, saveTokens, saveAppCredentials, getAppCredentials, hardReset } from './src/config.js'
 import { getSpotifyClient, electronAuthCommand } from './src/auth.js'
 
 const mpv = new mpvAPI({
@@ -238,7 +238,13 @@ ipcMain.handle('select-gif', (event, url, name) => {
   }
 })
 
-ipcMain.handle('is-logged-in', () => isLoggedIn())
+ipcMain.handle('is-logged-in', () => {
+  return isLoggedIn()
+})
+
+ipcMain.handle('logout-spotify', () => {
+  hardReset()
+})
 
 import { getStreamData } from './src/youtube.js'
 

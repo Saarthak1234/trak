@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('api', {
   saveSpotifyCreds: (id, secret) => ipcRenderer.invoke('save-spotify-creds', id, secret),
   getSpotifyCreds: () => ipcRenderer.invoke('get-spotify-creds'),
   isLoggedIn: () => ipcRenderer.invoke('is-logged-in'),
+  logoutSpotify: () => ipcRenderer.invoke('logout-spotify'),
   togglePlay: () => ipcRenderer.invoke('toggle-play'),
   seek: (seconds) => ipcRenderer.invoke('seek', seconds),
   nextSong: () => ipcRenderer.invoke('next-song'),
