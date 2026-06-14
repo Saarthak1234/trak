@@ -16,36 +16,71 @@ Featuring a sleek Glassmorphism UI, muStream gives you total control of your pla
 - **Expandable Search:** Instantly search for any custom song and start streaming it immediately.
 - **Robust Audio Controls:** Real-time synchronized playback tracking, volume slider, next/previous skip controls, and play/pause functionality.
 
-## Installation & Setup
+---
 
-Ensure you have [Node.js](https://nodejs.org) (v18+) and [npm](https://npmjs.com) installed.
+## Download & Install
 
-### Dependencies
-muStream requires `yt-dlp` and `mpv` to be installed on your system to process the audio streams.
+> **Prerequisites:** muStream requires `mpv` and `yt-dlp` to be installed on your system for audio playback. See the [Dependencies](#dependencies) section below.
 
-**Mac:**
+### macOS
+Download the latest `.dmg` from the [Releases page](https://github.com/Saarthak1234/muStream/releases/latest) and drag the app to your Applications folder.
+
+### Windows
+**One-line install (PowerShell):**
+```powershell
+Invoke-WebRequest -Uri "https://github.com/Saarthak1234/muStream/releases/latest/download/muStream-1.1.5.exe" -OutFile "$env:USERPROFILE\Downloads\muStream-Setup.exe"; Start-Process "$env:USERPROFILE\Downloads\muStream-Setup.exe"
+```
+> If Windows shows a SmartScreen warning, click **"More info" → "Run anyway"**. This is expected since the app is not commercially code-signed.
+
+### Linux
+**AppImage** (works on any distro, no install required):
+```bash
+curl -L "https://github.com/Saarthak1234/muStream/releases/latest/download/muStream-1.1.5.AppImage" -o ~/muStream.AppImage && chmod +x ~/muStream.AppImage && ~/muStream.AppImage
+```
+
+**Debian / Ubuntu (.deb):**
+```bash
+curl -L "https://github.com/Saarthak1234/muStream/releases/latest/download/mustream_1.1.5_amd64.deb" -o /tmp/mustream.deb && sudo dpkg -i /tmp/mustream.deb
+```
+
+---
+
+## Dependencies
+
+muStream requires `yt-dlp` and `mpv` to be installed on your system to process audio streams.
+
+**macOS:**
 ```bash
 brew install yt-dlp mpv
 ```
 
 **Linux (Debian/Ubuntu):**
 ```bash
-sudo apt-get install yt-dlp mpv
+sudo apt install yt-dlp mpv
 ```
 
-**Windows:**
-Install via [Scoop](https://scoop.sh/) or download them directly and add them to your PATH.
+**Windows** — Install via [Scoop](https://scoop.sh/):
 ```powershell
 scoop install yt-dlp mpv
 ```
+Or download them manually and add to your system `PATH`:
+- [yt-dlp releases](https://github.com/yt-dlp/yt-dlp/releases)
+- [mpv for Windows](https://mpv.io/installation/)
 
-### Install Application
+---
+
+## Build From Source
+
+Ensure you have [Node.js](https://nodejs.org) (v18+) and [npm](https://npmjs.com) installed.
+
 ```bash
 git clone https://github.com/Saarthak1234/muStream.git
 cd muStream
 npm install
 npm run start:electron
 ```
+
+---
 
 ## How to Connect Spotify
 
@@ -58,23 +93,29 @@ To fetch your playlists, you must connect your own Spotify Developer App.
 5. Check the box for "Web API", accept the terms, and click **Save**.
 6. On your app's dashboard, click **Settings**.
 7. Copy your **Client ID** and **Client Secret**.
-8. Launch muStream, and upon loading the app, you will be prompted to connect to Spotify. muStream securely handles the OAuth 2.0 authentication process locally.
+8. Launch muStream — upon loading you will be prompted to connect to Spotify. muStream securely handles the OAuth 2.0 authentication process locally.
+
+---
 
 ## UI Navigation
 
 - **Playlist Sidebar:** Open the side menu to view all your Spotify playlists. Double-click any playlist to load its tracks.
-- **Track List:** 
+- **Track List:**
   - *Single Click:* Highlight a track.
   - *Double Click:* Immediately play the track and queue all subsequent songs.
   - *Add Button (+):* Click the plus button on any track row to silently add it to the end of your queue.
 - **Queue Sidebar:** View your "Up Next" list, reorder songs by dragging the handles, or remove songs you don't want to hear.
 - **Search Bar:** Click the search icon in the bottom right to dynamically expand the search field and find individual songs.
 
+---
+
 ## How It Works
 1. muStream uses the official Spotify API via your developer credentials to fetch your library and extract track names.
 2. It passes the track titles and artist names to `yt-dlp`, which does a fast query for the official audio stream URL on YouTube.
 3. `mpv` via the `node-mpv` IPC interface streams the audio URL silently in the background.
 4. muStream's Electron frontend communicates with the Node.js backend using secure IPC messages to maintain a perfectly synchronized UI.
+
+---
 
 ## License
 MIT License.
