@@ -5,11 +5,15 @@ on:
     tags:
       - 'v*' # Trigger workflow when a version tag is pushed (e.g. v1.1.0)
 
+permissions:
+  contents: write # Needed to create GitHub Releases
+
 jobs:
   release:
     name: Build & Release on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false # Don't cancel Windows/Linux if Mac fails
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
     
