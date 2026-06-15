@@ -20,7 +20,7 @@ Featuring a sleek Glassmorphism UI, muStream gives you total control of your pla
 
 ## Download & Install
 
-> **Prerequisites:** muStream requires `mpv` and `yt-dlp` to be installed on your system for audio playback. See the [Dependencies](#dependencies) section below.
+> **muStream automatically detects and offers to install `mpv` and `yt-dlp` on first launch** using your system's package manager (Homebrew, apt, Scoop, winget, etc.). No manual setup required in most cases.
 
 ### macOS
 Download the latest `.dmg` from the [Releases page](https://github.com/Saarthak1234/muStream/releases/latest) and drag the app to your Applications folder.
@@ -47,7 +47,9 @@ curl -L "https://github.com/Saarthak1234/muStream/releases/latest/download/mustr
 
 ## Dependencies
 
-muStream requires `yt-dlp` and `mpv` to be installed on your system to process audio streams.
+muStream needs `mpv` and `yt-dlp` to stream audio. **These are installed automatically on first launch** via a native dialog.
+
+If the auto-install fails or you prefer to install them manually:
 
 **macOS:**
 ```bash
@@ -59,9 +61,11 @@ brew install yt-dlp mpv
 sudo apt install yt-dlp mpv
 ```
 
-**Windows** — Install via [Scoop](https://scoop.sh/):
+**Windows** — Install via [Scoop](https://scoop.sh/) or [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/):
 ```powershell
 scoop install yt-dlp mpv
+# or
+winget install yt-dlp.yt-dlp && winget install mpv.mpv
 ```
 Or download them manually and add to your system `PATH`:
 - [yt-dlp releases](https://github.com/yt-dlp/yt-dlp/releases)
