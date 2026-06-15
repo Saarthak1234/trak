@@ -1,6 +1,6 @@
 {
   "name": "mustream",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "description": "A beautiful Electron Desktop application to stream your Spotify playlists completely free via YouTube audio",
   "author": {
     "name": "Saarthak Agarwal",
@@ -74,6 +74,15 @@
       "target": [
         "nsis",
         "portable"
+      ],
+      "extraResources": [
+        {
+          "from": "vendor/win",
+          "to": "vendor",
+          "filter": [
+            "*.exe"
+          ]
+        }
       ]
     },
     "linux": {

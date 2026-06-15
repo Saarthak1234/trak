@@ -54,43 +54,54 @@ function createWindow() {
   mainWindow.loadFile(path.join(__dirname, 'ui', 'index.html'))
 }
 
-// ─── Dependency Auto-Installer ────────────────────────────────────────────
+// ─── Dependency Management ─────────────────────────────────────────────────
+
 function isCmdAvailable(cmd) {
   try { execSync(`${cmd} --version`, { stdio: 'ignore' }); return true } catch { return false }
 }
 
-function runInstallCmd(cmd) {
+function runInstallCmd(cmd, usePS = false) {
   return new Promise((resolve) => {
-    // Scoop is a PowerShell module — must use powershell.exe as shell on Windows
-    const options = process.platform === 'win32'
-      ? { shell: 'powershell.exe' }
-      : { shell: true }
+    const options = usePS ? { shell: 'powershell.exe' } : { shell: true }
     exec(cmd, options, (err) => {
-      if (err) console.error('Install command failed:', err.message)
+      if (err) console.error('Install failed:', err.message)
       resolve(!err)
     })
   })
 }
 
+// On Windows: add bundled vendor binaries (mpv.exe, yt-dlp.exe) to PATH
+// These are included inside the installer via electron-builder extraResources
+function addVendoredBinariesToPath() {
+  if (process.platform !== 'win32') return
+  const vendorPath = app.isPackaged
+    ? path.join(process.resourcesPath, 'vendor')
+    : path.join(__dirname, 'vendor', 'win')
+  if (fs.existsSync(vendorPath)) {
+    process.env.PATH = vendorPath + path.delimiter + process.env.PATH
+    console.log('Using bundled binaries from:', vendorPath)
+  }
+}
+
 async function checkAndInstallDeps() {
+  // Windows: binaries are bundled — nothing to install
+  if (process.platform === 'win32') return
+
   const missing = []
   if (!isCmdAvailable('mpv'))    missing.push('mpv')
   if (!isCmdAvailable('yt-dlp')) missing.push('yt-dlp')
   if (missing.length === 0) return
 
   const names = missing.join(' and ')
-  const platform = process.platform
-
-  // Build the install command and a human-readable description per OS
   let installCmd = null
   let managerName = null
 
-  if (platform === 'darwin') {
+  if (process.platform === 'darwin') {
     if (isCmdAvailable('brew')) {
       installCmd = `brew install ${missing.join(' ')}`
       managerName = 'Homebrew'
     }
-  } else if (platform === 'linux') {
+  } else if (process.platform === 'linux') {
     if (isCmdAvailable('apt-get')) {
       installCmd = `pkexec apt-get install -y ${missing.join(' ')}`
       managerName = 'apt'
@@ -101,18 +112,6 @@ async function checkAndInstallDeps() {
       installCmd = `pkexec pacman -S --noconfirm ${missing.join(' ')}`
       managerName = 'pacman'
     }
-  } else if (platform === 'win32') {
-    if (isCmdAvailable('scoop')) {
-      // Scoop is available — use it directly (has both mpv and yt-dlp)
-      installCmd = `scoop install ${missing.join(' ')}`
-      managerName = 'Scoop'
-    } else {
-      // Scoop not installed — install it first, then install deps via Scoop
-      // mpv is NOT in the winget catalog so Scoop is the only reliable option
-      const scoopBootstrap = missing.join(' ')
-      installCmd = `powershell -ExecutionPolicy Bypass -Command "Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Force; iwr -useb get.scoop.sh | iex; scoop install ${scoopBootstrap}"`
-      managerName = 'Scoop (will be installed automatically)'
-    }
   }
 
   if (installCmd && managerName) {
@@ -120,8 +119,8 @@ async function checkAndInstallDeps() {
       type: 'warning',
       title: 'Missing Dependencies',
       message: `muStream needs ${names} to play audio.`,
-      detail: `Click "Install Now" to automatically install ${names} using ${managerName}.\n\nThis will run:\n${installCmd}`,
-      buttons: ['Install Now', 'Skip (I\'ll do it manually)'],
+      detail: `Click "Install Now" to automatically install ${names} using ${managerName}.`,
+      buttons: ['Install Now', "Skip (I'll do it manually)"],
       defaultId: 0,
       cancelId: 1
     })
@@ -139,51 +138,41 @@ async function checkAndInstallDeps() {
       progressDialog.close()
 
       if (success) {
-        await dialog.showMessageBox({
-          type: 'info',
-          title: 'Installation Complete',
-          message: `${names} installed successfully! muStream is ready.`,
-          buttons: ['OK']
-        })
+        await dialog.showMessageBox({ type: 'info', title: 'Done!', message: `${names} installed successfully.`, buttons: ['OK'] })
       } else {
-        const { response: retryResponse } = await dialog.showMessageBox({
-          type: 'error',
-          title: 'Installation Failed',
+        const { response: r } = await dialog.showMessageBox({
+          type: 'error', title: 'Installation Failed',
           message: `Could not install ${names} automatically.`,
-          detail: `Please install manually:\n${installCmd}\n\nmuStream may not work correctly without these dependencies.`,
-          buttons: ['Open Documentation', 'Continue Anyway'],
-          defaultId: 0
+          detail: `Please install manually and restart muStream.\nSee: https://github.com/Saarthak1234/muStream#dependencies`,
+          buttons: ['Open Docs', 'Continue Anyway'], defaultId: 0
         })
-        if (retryResponse === 0) {
-          shell.openExternal('https://github.com/Saarthak1234/muStream#dependencies')
-        }
+        if (r === 0) shell.openExternal('https://github.com/Saarthak1234/muStream#dependencies')
       }
     }
   } else {
-    // No known package manager found — guide user to docs
-    await dialog.showMessageBox({
-      type: 'warning',
-      title: 'Missing Dependencies',
+    const { response } = await dialog.showMessageBox({
+      type: 'warning', title: 'Missing Dependencies',
       message: `muStream needs ${names} to play audio.`,
-      detail: `Could not find a package manager to install them automatically.\n\nPlease install ${names} manually and restart muStream.\n\nSee: https://github.com/Saarthak1234/muStream#dependencies`,
-      buttons: ['Open Docs', 'Continue Anyway'],
-      defaultId: 0
-    }).then(({ response }) => {
-      if (response === 0) shell.openExternal('https://github.com/Saarthak1234/muStream#dependencies')
+      detail: `Please install ${names} manually and restart.\nSee: https://github.com/Saarthak1234/muStream#dependencies`,
+      buttons: ['Open Docs', 'Continue Anyway'], defaultId: 0
     })
+    if (response === 0) shell.openExternal('https://github.com/Saarthak1234/muStream#dependencies')
   }
 }
 // ──────────────────────────────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
-  // Run dep check but NEVER let it crash or exit the app
+  // Step 1: Add bundled binaries to PATH (Windows: mpv.exe + yt-dlp.exe are inside the installer)
+  addVendoredBinariesToPath()
+
+  // Step 2: On Mac/Linux, offer to install missing deps via package manager
   try {
     await checkAndInstallDeps()
   } catch (e) {
-    console.error('Dependency check failed silently:', e.message)
+    console.error('Dependency check error (non-fatal):', e.message)
   }
 
-  // Initialize mpv only after confirming/installing the dependency
+  // Step 3: Initialize mpv (now that PATH includes vendored binaries)
   try {
     mpv = new mpvAPI({ audio_only: true, debug: false })
   } catch (e) {

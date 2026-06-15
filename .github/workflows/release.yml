@@ -41,11 +41,30 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential python3 libudev-dev libsecret-1-dev
 
-      - name: Install Windows Build Dependencies
+      - name: Bundle Windows Dependencies (mpv + yt-dlp)
         if: matrix.os == 'windows-latest'
-        run: |
-          npm install --global windows-build-tools --vs2019 || true
         shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path "vendor\win" | Out-Null
+
+          # Download yt-dlp.exe (single portable executable)
+          Write-Host "Downloading yt-dlp.exe..."
+          Invoke-WebRequest -Uri "https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp.exe" -OutFile "vendor\win\yt-dlp.exe" -UseBasicParsing
+
+          # Download mpv via Chocolatey (pre-installed on GitHub Actions Windows runners)
+          Write-Host "Installing mpv via Chocolatey..."
+          choco install mpv -y --no-progress
+          $mpvExe = (Get-Command mpv -ErrorAction SilentlyContinue).Source
+          if ($mpvExe) {
+            Write-Host "Copying mpv.exe from $mpvExe"
+            Copy-Item $mpvExe "vendor\win\mpv.exe"
+          } else {
+            Write-Error "mpv.exe not found after choco install"
+            exit 1
+          }
+
+          Write-Host "Bundled binaries:"
+          Get-ChildItem vendor\win
 
       - name: Install Dependencies
         run: npm install
