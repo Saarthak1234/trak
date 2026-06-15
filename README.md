@@ -26,9 +26,10 @@ Featuring a sleek Glassmorphism UI, muStream gives you total control of your pla
 Download the latest `.dmg` from the [Releases page](https://github.com/Saarthak1234/muStream/releases/latest) and drag the app to your Applications folder.
 
 ### Windows
-**One-line install (Command Prompt or PowerShell):**
+**Download and install (PowerShell — run each line separately):**
 ```powershell
-curl.exe -L "https://github.com/Saarthak1234/muStream/releases/latest/download/muStream.Setup.1.1.8.exe" -o "%USERPROFILE%\Downloads\muStream-Setup.exe" && start "" "%USERPROFILE%\Downloads\muStream-Setup.exe"
+curl.exe -L "https://github.com/Saarthak1234/muStream/releases/latest/download/muStream.Setup.1.1.8.exe" -o "$env:USERPROFILE\Downloads\muStream-Setup.exe"
+Start-Process "$env:USERPROFILE\Downloads\muStream-Setup.exe"
 ```
 > If Windows shows a SmartScreen warning, click **"More info" → "Run anyway"**. This is expected since the app is not commercially code-signed.
 
