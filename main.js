@@ -61,7 +61,14 @@ function isCmdAvailable(cmd) {
 
 function runInstallCmd(cmd) {
   return new Promise((resolve) => {
-    exec(cmd, { shell: true }, (err) => resolve(!err))
+    // Scoop is a PowerShell module — must use powershell.exe as shell on Windows
+    const options = process.platform === 'win32'
+      ? { shell: 'powershell.exe' }
+      : { shell: true }
+    exec(cmd, options, (err) => {
+      if (err) console.error('Install command failed:', err.message)
+      resolve(!err)
+    })
   })
 }
 
@@ -169,7 +176,12 @@ async function checkAndInstallDeps() {
 // ──────────────────────────────────────────────────────────────────────────
 
 app.whenReady().then(async () => {
-  await checkAndInstallDeps()
+  // Run dep check but NEVER let it crash or exit the app
+  try {
+    await checkAndInstallDeps()
+  } catch (e) {
+    console.error('Dependency check failed silently:', e.message)
+  }
 
   // Initialize mpv only after confirming/installing the dependency
   try {
