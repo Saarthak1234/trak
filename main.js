@@ -15,10 +15,8 @@ const { getTracks } = spotifyUrlInfo(fetch)
 import { isLoggedIn, getTokens, isTokenExpired, saveTokens, saveAppCredentials, getAppCredentials, hardReset } from './src/config.js'
 import { getSpotifyClient, electronAuthCommand } from './src/auth.js'
 
-const mpv = new mpvAPI({
-  audio_only: true,
-  debug: false
-})
+// mpv is initialized lazily after the dependency check (see app.whenReady)
+let mpv = null
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -169,6 +167,14 @@ async function checkAndInstallDeps() {
 
 app.whenReady().then(async () => {
   await checkAndInstallDeps()
+
+  // Initialize mpv only after confirming/installing the dependency
+  try {
+    mpv = new mpvAPI({ audio_only: true, debug: false })
+  } catch (e) {
+    console.warn('mpv could not be initialized:', e.message)
+  }
+
   createWindow()
 
   let currentGlobalShortcut = null;
