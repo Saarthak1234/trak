@@ -1183,7 +1183,7 @@ function injectThemeCard(theme, isCustom = false) {
       <div class="p-line-long" style="background: rgba(${theme.text}, 0.1);"></div>
       <div class="p-line-med" style="background: rgba(${theme.text}, 0.1);"></div>
     </div>
-    <div class="theme-info"><span style="color: rgb(${theme.text})">${theme.name}</span><span class="badge" style="color: rgba(${theme.text}, 0.5);">USER</span></div>
+    <div class="theme-info"><span>${theme.name}</span><span class="badge">USER</span></div>
   `
   
   if (isCustom) {
