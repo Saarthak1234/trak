@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, globalShortcut, dialog, shell } from 'electron'
+import { app, BrowserWindow, ipcMain, globalShortcut, dialog, shell, Tray, nativeImage, Menu } from 'electron'
 import fixPath from 'fix-path'
 
 // Fix the $PATH on macOS when run from a GUI app so it can find Homebrew bins like mpv
@@ -25,6 +25,7 @@ let mainWindow
 let credsWindow = null
 let gifWindow = null
 let settingsWindow = null
+let tray = null
 
 // ─── Playlist Cache ──────────────────────────────────────────────────────────
 let playlistCache = null
@@ -41,6 +42,7 @@ function createWindow() {
     resizable: true,
     minWidth: 400,
     minHeight: 250,
+    icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -184,6 +186,27 @@ app.whenReady().then(async () => {
     mpv = new mpvAPI({ audio_only: true, debug: false })
   } catch (e) {
     console.warn('mpv could not be initialized:', e.message)
+  }
+
+  const iconPath = path.join(__dirname, 'icon.png')
+  if (fs.existsSync(iconPath)) {
+    if (process.platform === 'darwin') {
+      app.dock.setIcon(iconPath)
+    }
+  }
+
+  const trayIconPath = path.join(__dirname, 'trayTemplate.png')
+  if (fs.existsSync(trayIconPath)) {
+    tray = new Tray(nativeImage.createFromPath(trayIconPath))
+    const contextMenu = Menu.buildFromTemplate([
+      { label: 'Show App', click: () => { if(mainWindow) { mainWindow.show(); mainWindow.focus(); } else { createWindow(); } } },
+      { label: 'Play/Pause', click: async () => { try { await mpv.togglePause() } catch(e) {} } },
+      { label: 'Next Track', click: () => { isManualStop = true; try { mpv.stop() } catch(e){}; handleNextSong(); } },
+      { type: 'separator' },
+      { label: 'Quit', click: () => { app.quit() } }
+    ])
+    tray.setToolTip('muStream')
+    tray.setContextMenu(contextMenu)
   }
 
   createWindow()
