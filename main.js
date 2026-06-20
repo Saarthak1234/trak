@@ -1,4 +1,8 @@
 import { app, BrowserWindow, ipcMain, globalShortcut, dialog, shell, Tray, nativeImage, Menu } from 'electron'
+
+// Set app name for macOS menu bar
+app.setName('muStream')
+
 import fixPath from 'fix-path'
 
 // Fix the $PATH on macOS when run from a GUI app so it can find Homebrew bins like mpv
