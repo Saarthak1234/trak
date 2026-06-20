@@ -200,6 +200,8 @@ app.whenReady().then(async () => {
     tray = new Tray(nativeImage.createFromPath(trayIconPath))
     const contextMenu = Menu.buildFromTemplate([
       { label: 'Show App', click: () => { if(mainWindow) { mainWindow.show(); mainWindow.focus(); } else { createWindow(); } } },
+      { label: 'Hide App', click: () => { if(mainWindow) mainWindow.hide(); } },
+      { type: 'separator' },
       { label: 'Play/Pause', click: async () => { try { await mpv.togglePause() } catch(e) {} } },
       { label: 'Next Track', click: () => { isManualStop = true; try { mpv.stop() } catch(e){}; handleNextSong(); } },
       { type: 'separator' },
