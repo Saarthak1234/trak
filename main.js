@@ -14,8 +14,19 @@ import { fileURLToPath } from 'url'
 import { searchCommand } from './src/youtube.js'
 import mpvAPI from 'node-mpv'
 import spotifyUrlInfo from 'spotify-url-info'
+import nodeFetch from 'node-fetch'
+import SpotifyWebApi from 'spotify-web-api-node'
+import 'dotenv/config'
 
-const { getTracks } = spotifyUrlInfo(fetch)
+const customFetch = (url, options = {}) => {
+  options.headers = {
+    ...options.headers,
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  }
+  return nodeFetch(url, options)
+}
+
+const { getTracks } = spotifyUrlInfo(customFetch)
 import { isLoggedIn, getTokens, isTokenExpired, saveTokens, saveAppCredentials, getAppCredentials, hardReset } from './src/config.js'
 import { getSpotifyClient, electronAuthCommand } from './src/auth.js'
 
@@ -558,7 +569,7 @@ ipcMain.handle('get-playlist-tracks', async (event, playlistId) => {
               const mapped = rawTracks.map(t => ({
                 name: t.name,
                 artist: t.artists ? t.artists.map(a => a.name).join(', ') : (t.artist || 'Unknown'),
-                duration_ms: t.duration_ms || 0
+                duration_ms: t.duration || t.duration_ms || 0
               }))
               return { status: 'success', tracks: mapped }
             }
@@ -600,16 +611,74 @@ ipcMain.handle('get-playlist-tracks', async (event, playlistId) => {
 
 ipcMain.handle('fetch-playlist-url', async (event, url) => {
   try {
-    const rawTracks = await getTracks(url)
+    const creds = getAppCredentials()
+    const clientId = creds.clientId || process.env.SPOTIFY_CLIENT_ID
+    const clientSecret = creds.clientSecret || process.env.SPOTIFY_CLIENT_SECRET
+    
+    // Try Official API if we have a way to authenticate
+    if (isLoggedIn() || (clientId && clientSecret)) {
+      try {
+        const spotify = new SpotifyWebApi({ clientId, clientSecret })
+        
+        if (isLoggedIn()) {
+          const { accessToken } = getTokens()
+          spotify.setAccessToken(accessToken)
+        } else {
+          const grant = await spotify.clientCredentialsGrant()
+          spotify.setAccessToken(grant.body['access_token'])
+        }
+        
+        const match = url.match(/playlist\/([a-zA-Z0-9]+)/)
+        if (!match) throw new Error('Invalid Spotify Playlist URL')
+        const playlistId = match[1]
+        
+        let tracks = []
+        let offset = 0
+        let limit = 100
+        let total = 100
+        
+        while (offset < total) {
+          const res = await spotify.getPlaylistTracks(playlistId, { offset, limit })
+          total = res.body.total
+          
+          const chunk = res.body.items
+            .filter(item => item && item.track)
+            .map(item => ({
+              name: item.track.name,
+              artist: item.track.artists?.[0]?.name || 'Unknown',
+              album: item.track.album?.name || '',
+              duration_ms: item.track.duration_ms || 0
+            }))
+            
+          tracks = tracks.concat(chunk)
+          offset += limit
+        }
+        return { status: 'success', tracks }
+      } catch (apiErr) {
+        console.error('Official API failed, falling back to scraper...', apiErr.message)
+        // If API fails, silently fall through to scraper
+      }
+    }
+    
+    // Fallback: spotify-url-info scraper (using pure node-fetch)
+    const spotifyUrlInfoAPI = spotifyUrlInfo(nodeFetch)
+    const rawTracks = await spotifyUrlInfoAPI.getTracks(url)
+    
     const tracks = rawTracks.map(t => ({
       name: t.name,
       artist: t.artists?.[0]?.name || t.artist || 'Unknown',
       album: t.album?.name || '',
-      duration_ms: t.duration_ms || 0
+      duration_ms: t.duration || t.duration_ms || t.durationMs || 0
     }))
+    
     return { status: 'success', tracks }
   } catch (err) {
-    return { status: 'error', message: err.message }
+    console.error('fetch-playlist-url error:', err)
+    let msg = err.message
+    if (msg.includes('Couldn\'t find any data')) {
+      msg = 'Spotify blocked the request or the playlist is private. Please log in or add your API credentials in Settings.'
+    }
+    return { status: 'error', message: msg }
   }
 })
 
