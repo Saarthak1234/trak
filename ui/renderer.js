@@ -334,6 +334,15 @@ async function openPlaylistSidebar(id, name, preloadedTracks = null) {
   sidebar.style.right = '0px'
   document.getElementById('queue-sidebar').style.left = '-280px' // close queue
   
+  if (!isQueueMode) {
+    isQueueMode = true
+    const btn = document.getElementById('btn-queue')
+    if (btn) {
+      btn.style.color = 'var(--accent)'
+      btn.title = 'Queue Mode: ON'
+    }
+  }
+  
   if (preloadedTracks) {
     renderSidebarTracks(preloadedTracks)
     return
