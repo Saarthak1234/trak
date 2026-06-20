@@ -510,7 +510,7 @@ if (document) document.addEventListener('click', (ev) => {
   const tracksSidebar = document.getElementById('tracks-sidebar')
   const btnToggleSidebar = document.getElementById('btn-toggle-sidebar')
   if (tracksSidebar && tracksSidebar.style.right === '0px') {
-    if (!tracksSidebar.contains(ev.target) && !btnToggleSidebar.contains(ev.target) && !btnPlaylist.contains(ev.target)) {
+    if (!tracksSidebar.contains(ev.target) && !btnToggleSidebar.contains(ev.target) && !btnPlaylist.contains(ev.target) && (!playlistMenu || !playlistMenu.contains(ev.target))) {
       tracksSidebar.style.right = '-280px'
     }
   }
@@ -733,8 +733,13 @@ if (searchInput) searchInput.addEventListener('keydown', async (e) => {
 })
 
 window.api.onTrackLoading((event, query) => {
-  document.getElementById('track-title').innerText = 'Searching...'
-  document.getElementById('track-artist').innerText = query
+  document.getElementById('track-title').innerText = query
+  document.getElementById('track-artist').innerText = 'Searching...'
+  
+  const playIcon = document.getElementById('icon-play')
+  if (playIcon) {
+    playIcon.outerHTML = `<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" id="icon-play" class="spin-fast"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>`
+  }
 })
 
 // Seamlessly update playlist menu when background cache refresh completes

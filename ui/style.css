@@ -734,3 +734,7 @@ input:checked + .slider:before {
   font-size: 11px;
   color: var(--text-muted);
 }
+
+.spin-fast {
+  animation: spin-cd 1s linear infinite;
+}
