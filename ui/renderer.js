@@ -736,9 +736,10 @@ window.api.onTrackLoading((event, query) => {
   document.getElementById('track-title').innerText = query
   document.getElementById('track-artist').innerText = 'Searching...'
   
-  const playIcon = document.getElementById('icon-play')
-  if (playIcon) {
-    playIcon.outerHTML = `<svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" id="icon-play" class="spin-fast"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg>`
+  const icon = document.getElementById('icon-play')
+  if (icon) {
+    icon.classList.add('spin-fast')
+    icon.innerHTML = '<path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/>'
   }
 })
 
@@ -1010,10 +1011,13 @@ window.api.onPlaybackStopped(() => {
 })
 
 function updatePlayIcon() {
+  const icon = document.getElementById('icon-play')
+  if (!icon) return
+  icon.classList.remove('spin-fast')
   if (isPlaying) {
-    playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
+    icon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>'
   } else {
-    playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>'
+    icon.innerHTML = '<path d="M8 5v14l11-7z"/>'
   }
 }
 
