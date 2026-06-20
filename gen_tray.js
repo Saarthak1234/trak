@@ -12,20 +12,20 @@ app.whenReady().then(async () => {
   const html = `
     <html>
       <body style="margin: 0; padding: 0; background: transparent; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh;">
-        <svg width="38" height="38" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <mask id="hole">
               <rect width="24" height="24" fill="white"/>
               
               <!-- Tweak translate(X, Y) and scale(X) below to move and resize the note inside the squircle -->
-              <g transform="translate(4.85, 5.325) scale(0.65)">
+              <g transform="translate(2.5, 3.5) scale(0.75)">
                 <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z" fill="black"/>
               </g>
             </mask>
           </defs>
           
           <!-- Tweak width, height, and rx (corner radius) below to change the outer squircle -->
-          <rect x="3" y="3" width="18" height="18" rx="4" fill="black" mask="url(#hole)"/>
+          <rect x="2" y="2" width="20" height="20" rx="5" fill="black" mask="url(#hole)"/>
         </svg>
       </body>
     </html>
