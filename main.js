@@ -455,6 +455,8 @@ ipcMain.handle('is-logged-in', () => {
 
 ipcMain.handle('logout-spotify', () => {
   hardReset()
+  if (mainWindow && !mainWindow.isDestroyed()) mainWindow.reload()
+  if (settingsWindow && !settingsWindow.isDestroyed()) settingsWindow.reload()
 })
 
 import { getStreamData } from './src/youtube.js'
