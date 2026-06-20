@@ -314,6 +314,23 @@
           </div>
           <p class="opacity-desc" style="margin-bottom: 12px;">Connecting to Spotify allows you to stream your private playlists directly within muStream.</p>
           <button class="pill-btn" id="btn-auth-settings" style="background: rgba(255,255,255,0.1)">Login to Spotify</button>
+          
+          <!-- Inline Credentials Form -->
+          <div id="spotify-creds-form" style="display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.05);">
+            <div style="margin-bottom: 12px;">
+              <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Client ID</label>
+              <input type="text" id="spotify-client-id" class="premium-input" placeholder="Enter Spotify Client ID" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div style="margin-bottom: 16px;">
+              <label style="display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">Client Secret</label>
+              <input type="password" id="spotify-client-secret" class="premium-input" placeholder="Enter Spotify Client Secret" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <button id="btn-save-spotify-creds" class="premium-btn" style="flex: 1;">Save & Authorize</button>
+              <a href="#" id="link-spotify-dev" style="font-size: 11px; color: var(--accent); text-decoration: none;">Get Credentials?</a>
+            </div>
+          </div>
+          
         </div>
       </div>
 
