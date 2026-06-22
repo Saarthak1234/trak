@@ -722,6 +722,9 @@ async function playTrack(query) {
     currentTrack = { title: data.title, artist: 'YouTube', durationSeconds, durationStr: data.durationStr, query }
 
     await mpv.load(data.streamUrl, 'replace')
+    if (isLooping) {
+      try { mpv.loop('inf') } catch(e){}
+    }
     await mpv.play()
     
     if (mainWindow && !mainWindow.isDestroyed()) {
@@ -736,10 +739,6 @@ async function playTrack(query) {
 }
 
 function handleNextSong() {
-  if (isLooping && currentTrack) {
-    playTrack(currentTrack.query)
-    return
-  }
   if (currentTrack) playHistory.push(currentTrack.query)
   if (playQueue.length > 0) {
     let nextQuery = playQueue.shift()
@@ -823,6 +822,10 @@ ipcMain.handle('prev-song', async () => {
 
 ipcMain.handle('toggle-loop', () => {
   isLooping = !isLooping
+  try {
+    if (isLooping) mpv.loop('inf')
+    else mpv.clearLoop()
+  } catch(e) {}
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('loop-toggled', isLooping)
   return isLooping
 })
