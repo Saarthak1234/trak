@@ -1,14 +1,14 @@
-# muStream
+# Trak
 
-muStream is a beautiful, modern Electron Desktop Application that allows you to stream your Spotify playlists completely free by sourcing the official audio directly from YouTube. Say goodbye to Spotify ads and premium limitations.
+Trak is a beautiful, modern Electron Desktop Application that allows you to stream your Spotify playlists completely free by sourcing the official audio directly from YouTube. Say goodbye to Spotify ads and premium limitations.
 
-Featuring a sleek Glassmorphism UI, muStream gives you total control of your playback securely and privately.
+Featuring a sleek Glassmorphism UI, Trak gives you total control of your playback securely and privately.
 
 ## Features
 
 - **Beautiful Desktop Interface:** A modern, premium UI featuring dark mode aesthetics, smooth glassmorphism effects, dynamic layout, and fluid animations.
 - **Spotify Integration:** Connect your own Spotify Developer App to securely fetch, browse, and play your private playlists directly from your library.
-- **Zero-Setup Playback Backend:** muStream uses `yt-dlp` and `node-mpv` under the hood to stream high-quality audio silently, handling network reconnects and throttling automatically.
+- **Zero-Setup Playback Backend:** Trak uses `yt-dlp` and `node-mpv` under the hood to stream high-quality audio silently, handling network reconnects and throttling automatically.
 - **Advanced Queue Management:**
   - Drag-and-drop your "Up Next" queue to easily reorder upcoming tracks.
   - Remove tracks, clear the queue, or seamlessly append new playlists.
@@ -20,28 +20,28 @@ Featuring a sleek Glassmorphism UI, muStream gives you total control of your pla
 
 ## Download & Install
 
-> **muStream automatically detects and offers to install `mpv` and `yt-dlp` on first launch** using your system's package manager (Homebrew, apt, Scoop, winget, etc.). No manual setup required in most cases.
+> **Trak automatically detects and offers to install `mpv` and `yt-dlp` on first launch** using your system's package manager (Homebrew, apt, Scoop, winget, etc.). No manual setup required in most cases.
 
 ### macOS
-Download the latest `.dmg` from the [Releases page](https://github.com/Saarthak1234/muStream/releases/latest) and drag the app to your Applications folder.
+Download the latest `.dmg` from the [Releases page](https://github.com/Saarthak1234/Trak/releases/latest) and drag the app to your Applications folder.
 
 ### Windows
 **Download and install (PowerShell — run each line separately):**
 ```powershell
-curl.exe -L "https://github.com/Saarthak1234/muStream/releases/latest/download/muStream.Setup.1.1.15.exe" -o "$env:USERPROFILE\Downloads\muStream-Setup.exe"
-Start-Process "$env:USERPROFILE\Downloads\muStream-Setup.exe"
+curl.exe -L "https://github.com/Saarthak1234/Trak/releases/latest/download/Trak.Setup.1.1.15.exe" -o "$env:USERPROFILE\Downloads\Trak-Setup.exe"
+Start-Process "$env:USERPROFILE\Downloads\Trak-Setup.exe"
 ```
 > If Windows shows a SmartScreen warning, click **"More info" → "Run anyway"**. This is expected since the app is not commercially code-signed.
 
 ### Linux
 **AppImage** (works on any distro, no install required):
 ```bash
-curl -L "https://github.com/Saarthak1234/muStream/releases/latest/download/muStream-1.1.15.AppImage" -o ~/muStream.AppImage && chmod +x ~/muStream.AppImage && ~/muStream.AppImage
+curl -L "https://github.com/Saarthak1234/Trak/releases/latest/download/Trak-1.1.15.AppImage" -o ~/Trak.AppImage && chmod +x ~/Trak.AppImage && ~/Trak.AppImage
 ```
 
 **Debian / Ubuntu (.deb):**
 ```bash
-curl -L "https://github.com/Saarthak1234/muStream/releases/latest/download/mustream_1.1.15_amd64.deb" -o /tmp/mustream.deb && sudo dpkg -i /tmp/mustream.deb
+curl -L "https://github.com/Saarthak1234/Trak/releases/latest/download/trak_1.1.15_amd64.deb" -o /tmp/trak.deb && sudo dpkg -i /tmp/trak.deb
 ```
 
 > **Note for maintainers:** Update the version numbers above whenever a new release is cut.
@@ -50,7 +50,7 @@ curl -L "https://github.com/Saarthak1234/muStream/releases/latest/download/mustr
 
 ## Dependencies
 
-muStream needs `mpv` and `yt-dlp` to stream audio. **These are installed automatically on first launch** via a native dialog.
+Trak needs `mpv` and `yt-dlp` to stream audio. **These are installed automatically on first launch** via a native dialog.
 
 If the auto-install fails or you prefer to install them manually:
 
@@ -84,8 +84,8 @@ Or download them manually and add to your system `PATH`:
 Ensure you have [Node.js](https://nodejs.org) (v18+) and [npm](https://npmjs.com) installed.
 
 ```bash
-git clone https://github.com/Saarthak1234/muStream.git
-cd muStream
+git clone https://github.com/Saarthak1234/Trak.git
+cd Trak
 npm install
 npm run start:electron
 ```
@@ -103,7 +103,7 @@ To fetch your playlists, you must connect your own Spotify Developer App.
 5. Check the box for "Web API", accept the terms, and click **Save**.
 6. On your app's dashboard, click **Settings**.
 7. Copy your **Client ID** and **Client Secret**.
-8. Launch muStream — upon loading you will be prompted to connect to Spotify. muStream securely handles the OAuth 2.0 authentication process locally.
+8. Launch Trak — upon loading you will be prompted to connect to Spotify. Trak securely handles the OAuth 2.0 authentication process locally.
 
 ---
 
@@ -120,10 +120,10 @@ To fetch your playlists, you must connect your own Spotify Developer App.
 ---
 
 ## How It Works
-1. muStream uses the official Spotify API via your developer credentials to fetch your library and extract track names.
+1. Trak uses the official Spotify API via your developer credentials to fetch your library and extract track names.
 2. It passes the track titles and artist names to `yt-dlp`, which does a fast query for the official audio stream URL on YouTube.
 3. `mpv` via the `node-mpv` IPC interface streams the audio URL silently in the background.
-4. muStream's Electron frontend communicates with the Node.js backend using secure IPC messages to maintain a perfectly synchronized UI.
+4. Trak's Electron frontend communicates with the Node.js backend using secure IPC messages to maintain a perfectly synchronized UI.
 
 ---
 

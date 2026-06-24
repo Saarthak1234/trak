@@ -1,23 +1,23 @@
 {
-  "name": "mustream",
+  "name": "trak",
   "version": "1.1.16",
   "description": "A beautiful Electron Desktop application to stream your Spotify playlists completely free via YouTube audio",
   "author": {
     "name": "Saarthak Agarwal",
     "email": "saarthakagarwal0408@gmail.com"
   },
-  "repository": "Saarthak1234/muStream",
+  "repository": "Saarthak1234/Trak",
   "type": "module",
   "bin": {
-    "mustream": "./bin/musync.js"
+    "trak": "./bin/musync.js"
   },
   "main": "main.js",
   "scripts": {
     "start": "node bin/musync.js",
     "dev": "node --watch bin/musync.js",
     "start:electron": "electron .",
-    "build:cli": "bun build ./bin/musync.js --compile --outfile dist/mustream",
-    "build:cli:all": "bun build ./bin/musync.js --compile --target bun-darwin-x64 --outfile dist/mustream-mac-intel && bun build ./bin/musync.js --compile --target bun-darwin-arm64 --outfile dist/mustream-mac-arm && bun build ./bin/musync.js --compile --target bun-windows-x64 --outfile dist/mustream-windows.exe && bun build ./bin/musync.js --compile --target bun-linux-x64 --outfile dist/mustream-linux",
+    "build:cli": "bun build ./bin/musync.js --compile --outfile dist/trak",
+    "build:cli:all": "bun build ./bin/musync.js --compile --target bun-darwin-x64 --outfile dist/trak-mac-intel && bun build ./bin/musync.js --compile --target bun-darwin-arm64 --outfile dist/trak-mac-arm && bun build ./bin/musync.js --compile --target bun-windows-x64 --outfile dist/trak-windows.exe && bun build ./bin/musync.js --compile --target bun-linux-x64 --outfile dist/trak-linux",
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux",
@@ -49,8 +49,8 @@
     "electron-builder": "^26.15.3"
   },
   "build": {
-    "appId": "com.mustream.desktop",
-    "productName": "muStream",
+    "appId": "com.trak.desktop",
+    "productName": "Trak",
     "directories": {
       "output": "dist_app"
     },

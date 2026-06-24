@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, globalShortcut, dialog, shell, Tray, nativeImage, Menu } from 'electron'
 
 // Set app name for macOS menu bar
-app.setName('muStream')
+app.setName('Trak')
 
 import fixPath from 'fix-path'
 
@@ -57,7 +57,7 @@ function createWindow() {
     resizable: true,
     minWidth: 400,
     minHeight: 250,
-    title: 'muStream',
+    title: 'Trak',
     icon: path.join(__dirname, 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -143,7 +143,7 @@ async function checkAndInstallDeps() {
     const { response } = await dialog.showMessageBox({
       type: 'warning',
       title: 'Missing Dependencies',
-      message: `muStream needs ${names} to play audio.`,
+      message: `Trak needs ${names} to play audio.`,
       detail: `Click "Install Now" to automatically install ${names} using ${managerName}.`,
       buttons: ['Install Now', "Skip (I'll do it manually)"],
       defaultId: 0,
@@ -168,20 +168,20 @@ async function checkAndInstallDeps() {
         const { response: r } = await dialog.showMessageBox({
           type: 'error', title: 'Installation Failed',
           message: `Could not install ${names} automatically.`,
-          detail: `Please install manually and restart muStream.\nSee: https://github.com/Saarthak1234/muStream#dependencies`,
+          detail: `Please install manually and restart Trak.\nSee: https://github.com/Saarthak1234/Trak#dependencies`,
           buttons: ['Open Docs', 'Continue Anyway'], defaultId: 0
         })
-        if (r === 0) shell.openExternal('https://github.com/Saarthak1234/muStream#dependencies')
+        if (r === 0) shell.openExternal('https://github.com/Saarthak1234/Trak#dependencies')
       }
     }
   } else {
     const { response } = await dialog.showMessageBox({
       type: 'warning', title: 'Missing Dependencies',
-      message: `muStream needs ${names} to play audio.`,
-      detail: `Please install ${names} manually and restart.\nSee: https://github.com/Saarthak1234/muStream#dependencies`,
+      message: `Trak needs ${names} to play audio.`,
+      detail: `Please install ${names} manually and restart.\nSee: https://github.com/Saarthak1234/Trak#dependencies`,
       buttons: ['Open Docs', 'Continue Anyway'], defaultId: 0
     })
-    if (response === 0) shell.openExternal('https://github.com/Saarthak1234/muStream#dependencies')
+    if (response === 0) shell.openExternal('https://github.com/Saarthak1234/Trak#dependencies')
   }
 }
 // ──────────────────────────────────────────────────────────────────────────
@@ -223,7 +223,7 @@ app.whenReady().then(async () => {
       { type: 'separator' },
       { label: 'Quit', click: () => { app.quit() } }
     ])
-    tray.setToolTip('muStream')
+    tray.setToolTip('Trak')
     tray.setContextMenu(contextMenu)
   }
 
