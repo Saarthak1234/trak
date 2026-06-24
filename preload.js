@@ -45,6 +45,7 @@ contextBridge.exposeInMainWorld('api', {
   updateGlobalShortcut: (shortcut) => ipcRenderer.invoke('update-global-shortcut', shortcut),
   registerGlobalShortcuts: (shortcuts) => ipcRenderer.invoke('register-global-shortcuts', shortcuts),
   onGlobalAction: (callback) => ipcRenderer.on('global-action', callback),
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
   syncSettings: (settings) => ipcRenderer.invoke('sync-settings', settings),
   onSettingsSynced: (callback) => ipcRenderer.on('settings-synced', callback)
 })

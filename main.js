@@ -388,6 +388,12 @@ ipcMain.handle('minimize-app', () => {
   if (mainWindow) mainWindow.minimize()
 })
 
+ipcMain.handle('open-external', (event, url) => {
+  if (url) {
+    shell.openExternal(url);
+  }
+})
+
 ipcMain.handle('open-credentials-window', () => {
   if (credsWindow) {
     credsWindow.focus()
