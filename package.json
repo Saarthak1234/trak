@@ -62,7 +62,8 @@
       "preload.js",
       "src/**/*",
       "ui/**/*",
-      "package.json"
+      "package.json",
+      "*.png"
     ],
     "mac": {
       "category": "public.app-category.music",
