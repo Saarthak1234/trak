@@ -253,6 +253,52 @@ app.whenReady().then(async () => {
     }
   });
 
+  ipcMain.handle('register-global-shortcuts', (event, shortcuts) => {
+    globalShortcut.unregisterAll();
+    
+    if (shortcuts.globalToggle) {
+      try {
+        globalShortcut.register(shortcuts.globalToggle, () => {
+          if (mainWindow) {
+            if (mainWindow.isVisible() && mainWindow.isFocused()) {
+              mainWindow.minimize()
+            } else {
+              mainWindow.show()
+              mainWindow.focus()
+            }
+          } else {
+            createWindow()
+          }
+        })
+      } catch(e) {}
+    }
+
+    const mapAction = (key, actionName) => {
+      if (shortcuts[key]) {
+        try {
+          globalShortcut.register(shortcuts[key], () => {
+            if (mainWindow && !mainWindow.isDestroyed()) {
+              if (['search', 'settings', 'gifPicker'].includes(actionName)) {
+                mainWindow.show()
+                mainWindow.focus()
+              }
+              mainWindow.webContents.send('global-action', actionName)
+            }
+          })
+        } catch(e) {}
+      }
+    }
+
+    mapAction('playPause', 'playPause')
+    mapAction('nextSong', 'nextSong')
+    mapAction('prevSong', 'prevSong')
+    mapAction('loop', 'loop')
+    mapAction('shuffle', 'shuffle')
+    mapAction('search', 'search')
+    mapAction('gifPicker', 'gifPicker')
+    mapAction('settings', 'settings')
+  });
+
   // Debug: Listen to MPV's native timeposition event (this often fails for streams)
   mpv.on('timeposition', (time) => {
     // console.log('DEBUG [main.js]: mpv.on(timeposition) fired:', time)

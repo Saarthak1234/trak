@@ -33,6 +33,8 @@ contextBridge.exposeInMainWorld('api', {
   onTrackStarted: (callback) => ipcRenderer.on('track-started', callback),
   onTrackLoading: (callback) => ipcRenderer.on('track-loading', callback),
   onTrackError: (callback) => ipcRenderer.on('track-error', callback),
+  onLoopToggled: (callback) => ipcRenderer.on('loop-toggled', callback),
+  onShuffleToggled: (callback) => ipcRenderer.on('shuffle-toggled', callback),
   onPlaybackTime: (callback) => ipcRenderer.on('playback-time', callback),
   onPlaybackStopped: (callback) => ipcRenderer.on('playback-stopped', callback),
   onPlaybackStateUpdate: (callback) => ipcRenderer.on('playback-state-update', callback),
@@ -41,6 +43,8 @@ contextBridge.exposeInMainWorld('api', {
   selectGif: (gifUrl, gifName) => ipcRenderer.invoke('select-gif', gifUrl, gifName),
   onGifSelected: (callback) => ipcRenderer.on('gif-selected', callback),
   updateGlobalShortcut: (shortcut) => ipcRenderer.invoke('update-global-shortcut', shortcut),
+  registerGlobalShortcuts: (shortcuts) => ipcRenderer.invoke('register-global-shortcuts', shortcuts),
+  onGlobalAction: (callback) => ipcRenderer.on('global-action', callback),
   syncSettings: (settings) => ipcRenderer.invoke('sync-settings', settings),
   onSettingsSynced: (callback) => ipcRenderer.on('settings-synced', callback)
 })

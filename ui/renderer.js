@@ -710,7 +710,9 @@ if (!appShortcuts.prevSong) appShortcuts.prevSong = 'CommandOrControl+Shift+Arro
 if (!appShortcuts.loop) appShortcuts.loop = 'CommandOrControl+Shift+L';
 if (!appShortcuts.shuffle) appShortcuts.shuffle = 'CommandOrControl+Shift+R';
 
-window.api.updateGlobalShortcut(appShortcuts.globalToggle);
+if (window.api && window.api.registerGlobalShortcuts) {
+  window.api.registerGlobalShortcuts(appShortcuts);
+}
 
 const inputs = {
   globalToggle: document.getElementById('shortcut-global'),
@@ -765,6 +767,9 @@ window.addEventListener('storage', (e) => {
   if (e.key === 'appShortcuts' && e.newValue) {
     appShortcuts = JSON.parse(e.newValue);
     updateInputs();
+    if (window.api && window.api.registerGlobalShortcuts) {
+      window.api.registerGlobalShortcuts(appShortcuts);
+    }
   }
 });
 
@@ -790,8 +795,8 @@ function handleShortcutRecord(e, keyName) {
     appShortcuts[keyName] = newShortcut;
     localStorage.setItem('appShortcuts', JSON.stringify(appShortcuts));
     
-    if (keyName === 'globalToggle') {
-      window.api.updateGlobalShortcut(newShortcut);
+    if (window.api && window.api.registerGlobalShortcuts) {
+      window.api.registerGlobalShortcuts(appShortcuts);
     }
     
     updateInputs();
@@ -826,6 +831,35 @@ function attachShortcutRecorders(inputsObj, keyName) {
     inputsObj.addEventListener('focus', handleShortcutFocus);
     inputsObj.addEventListener('blur', handleShortcutBlur);
   }
+}
+
+if (window.api && window.api.onGlobalAction) {
+  window.api.onGlobalAction((event, action) => {
+    if (action === 'playPause') window.api.togglePlay();
+    else if (action === 'nextSong') window.api.nextSong();
+    else if (action === 'prevSong') window.api.prevSong();
+    else if (action === 'loop') {
+      window.api.toggleLoop().then(looping => {
+        const loopBtn = document.getElementById('btn-loop');
+        if (loopBtn) loopBtn.style.color = looping ? 'var(--accent)' : 'inherit';
+      });
+    }
+    else if (action === 'shuffle') {
+      window.api.toggleShuffle().then(shuffling => {
+        const shufBtn = document.getElementById('btn-shuffle');
+        if (shufBtn) shufBtn.style.color = shuffling ? 'var(--accent)' : 'inherit';
+      });
+    }
+    else if (action === 'search') {
+      if (typeof toggleSearch === 'function') toggleSearch();
+    }
+    else if (action === 'gifPicker') {
+      if (window.api.openGifWindow) window.api.openGifWindow();
+    }
+    else if (action === 'settings') {
+      if (window.api.openSettings) window.api.openSettings();
+    }
+  });
 }
 
 attachShortcutRecorders(inputs.globalToggle, 'globalToggle');
