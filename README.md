@@ -8,6 +8,12 @@ Featuring a sleek Glassmorphism UI, Trak gives you total control of your playbac
 
 ## 🚀 Installation
 
+### macOS (Recommended: Homebrew)
+Apple's Gatekeeper often blocks indie apps from opening. To **completely bypass** the "Damaged App" error and install all required dependencies automatically, use Homebrew:
+```bash
+brew install saarthak1234/trak/trak
+```
+
 ### macOS (Manual Download)
 1. Download the latest `.zip` release from the [Releases page](https://github.com/Saarthak1234/trak/releases). *(Use the `.zip` instead of `.dmg` to avoid Gatekeeper extraction bugs).*
 2. Unzip and drag `Trak.app` to your Applications folder.
