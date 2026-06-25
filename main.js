@@ -343,10 +343,10 @@ app.whenReady().then(async () => {
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('playback-stopped')
     }
+    // Only proceed to next song naturally if we aren't manually stopping/loading
     if (!app.isQuiting && !isManualStop) {
       handleNextSong()
     }
-    isManualStop = false
   })
 
   app.on('activate', () => {
@@ -763,12 +763,42 @@ let isManualStop = false
 
 let currentPlayToken = 0
 
+// Background preloading logic
+let preloadedNextTrack = null;
+let preloadToken = 0;
+
+async function preloadNext() {
+  if (playQueue.length === 0) return;
+  const nextQuery = playQueue[0];
+  const myToken = ++preloadToken;
+  try {
+    const data = await getStreamData(nextQuery);
+    if (myToken === preloadToken) {
+      preloadedNextTrack = { query: nextQuery, data };
+      console.log(`[Preload] Successfully cached next track: ${data.title}`);
+    }
+  } catch(e) {
+    console.error('[Preload] Failed to preload next track:', e.message);
+  }
+}
+
 async function playTrack(query) {
   const token = ++currentPlayToken
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('track-loading', query)
   try {
-    const data = await getStreamData(query)
-    
+    let data;
+    if (preloadedNextTrack && preloadedNextTrack.query === query) {
+      console.log(`[playTrack] Cache HIT for '${query}'! Playing instantly.`);
+      data = preloadedNextTrack.data;
+      preloadedNextTrack = null;
+    } else {
+      console.log(`[playTrack] Cache MISS for '${query}'. Fetching...`);
+      data = await getStreamData(query);
+    }
+
+    // Fire and forget preload for the new next song in queue
+    preloadNext();
+
     // If the user clicked another song while this one was loading, abort!
     if (token !== currentPlayToken) {
       console.log(`[playTrack] Aborting playback of '${query}' because a newer track was requested.`)
@@ -786,11 +816,13 @@ async function playTrack(query) {
     
     currentTrack = { title: data.title, artist: 'YouTube', durationSeconds, durationStr: data.durationStr, query }
 
+    isManualStop = true;
     await mpv.load(data.streamUrl, 'replace')
     if (isLooping) {
       try { mpv.loop('inf') } catch(e){}
     }
     await mpv.play()
+    setTimeout(() => { isManualStop = false }, 1500)
     
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('track-started', currentTrack)
@@ -835,6 +867,7 @@ ipcMain.handle('search-song', async (event, query) => {
 
 ipcMain.handle('add-queue', (event, query) => {
   playQueue.unshift(query)
+  preloadNext()
   return playQueue
 })
 
@@ -870,6 +903,7 @@ ipcMain.handle('set-queue', (event, newQueue) => {
       [playQueue[i], playQueue[j]] = [playQueue[j], playQueue[i]];
     }
   }
+  preloadNext()
   return playQueue
 })
 
