@@ -340,12 +340,16 @@ app.whenReady().then(async () => {
   }, 1000)
 
   mpv.on('stopped', () => {
+    console.log(`[MPV EVENT] 'stopped' fired! app.isQuiting=${app.isQuiting}, isManualStop=${isManualStop}`);
     if (mainWindow && !mainWindow.isDestroyed()) {
       mainWindow.webContents.send('playback-stopped')
     }
     // Only proceed to next song naturally if we aren't manually stopping/loading
     if (!app.isQuiting && !isManualStop) {
+      console.log(`[MPV EVENT] Natural stop detected, calling handleNextSong()`);
       handleNextSong()
+    } else {
+      console.log(`[MPV EVENT] Ignored stopped event due to isManualStop=${isManualStop}`);
     }
   })
 
@@ -836,11 +840,14 @@ async function playTrack(query) {
 }
 
 function handleNextSong() {
+  console.log(`[handleNextSong] Called. Current Queue Length: ${playQueue.length}`);
   if (currentTrack) playHistory.push(currentTrack.query)
   if (playQueue.length > 0) {
     let nextQuery = playQueue.shift()
+    console.log(`[handleNextSong] Popped '${nextQuery}', playing...`);
     playTrack(nextQuery)
   } else {
+    console.log(`[handleNextSong] Queue empty, stopping.`);
     currentTrack = null
   }
 }
@@ -908,6 +915,7 @@ ipcMain.handle('set-queue', (event, newQueue) => {
 })
 
 ipcMain.handle('next-song', async () => {
+  console.log(`[IPC] 'next-song' received from UI!`);
   isManualStop = true
   try { await mpv.stop() } catch(e){}
   handleNextSong()
