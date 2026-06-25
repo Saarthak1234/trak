@@ -774,6 +774,7 @@ let preloadToken = 0;
 async function preloadNext() {
   if (playQueue.length === 0) return;
   const nextQuery = playQueue[0];
+  if (preloadedNextTrack && preloadedNextTrack.query === nextQuery) return; // Already cached
   const myToken = ++preloadToken;
   try {
     const data = await getStreamData(nextQuery);
@@ -883,6 +884,7 @@ ipcMain.handle('get-queue', () => playQueue)
 ipcMain.handle('clear-queue', () => {
   if (!playQueue.length) return playQueue;
   playQueue = []
+  preloadedNextTrack = null;
   return playQueue
 })
 
@@ -891,6 +893,7 @@ ipcMain.handle('reorder-queue', (e, oldIndex, newIndex) => {
   if (oldIndex >= 0 && oldIndex < playQueue.length && newIndex >= 0 && newIndex < playQueue.length) {
     const [item] = playQueue.splice(oldIndex, 1)
     playQueue.splice(newIndex, 0, item)
+    preloadNext()
   }
   return playQueue
 })
@@ -898,6 +901,7 @@ ipcMain.handle('reorder-queue', (e, oldIndex, newIndex) => {
 ipcMain.handle('splice-queue', (e, start, deleteCount) => {
   if (!playQueue.length) return playQueue;
   playQueue.splice(start, deleteCount)
+  preloadNext()
   return playQueue
 })
 
@@ -949,6 +953,7 @@ ipcMain.handle('toggle-shuffle', () => {
     const newlyAdded = playQueue.filter(track => !originalQueue.includes(track))
     playQueue = [...originalQueue.filter(track => playQueue.includes(track)), ...newlyAdded]
   }
+  preloadNext()
   if (mainWindow && !mainWindow.isDestroyed()) mainWindow.webContents.send('shuffle-toggled', isShuffling)
   return isShuffling
 })
