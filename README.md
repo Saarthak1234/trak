@@ -11,7 +11,7 @@ Featuring a sleek Glassmorphism UI, Trak gives you total control of your playbac
 ## Demo
 
 <a href="https://www.loom.com/share/eb22f38109514806aca9f4ad90e88c86">
-  <img src="https://cdn.loom.com/sessions/thumbnails/eb22f38109514806aca9f4ad90e88c86-with-play.gif" alt="Trak demo video" width="100%">
+  <img src="https://www.loom.com/v1/videos/eb22f38109514806aca9f4ad90e88c86/thumbnail.gif" alt="Trak demo video" width="100%">
 </a>
 
 ▶️ **[Watch the full demo on Loom](https://www.loom.com/share/eb22f38109514806aca9f4ad90e88c86)**
